@@ -1,3 +1,4 @@
+using LektionsVinylCollection.Entities;
 using LektionsVinylCollection.Repo;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,8 +11,10 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton<IVinylRepo, VinylRepo>();
+builder.Services.AddScoped<IVinylRepo, VinylRepo>();
+builder.Services.AddDbContext<ApplicationContext>();
 
+// i startup: serivces.AddDbContext<ApplicationContext>();
 
 var app = builder.Build();
 

@@ -13,7 +13,7 @@ namespace LektionsVinylCollection.Repo
 
         Vinyl CreateVinyl(CreateVinylDTO vinyl);
 
-        Vinyl UpdateVinyl(Vinyl vinyl);
+        Vinyl UpdateVinyl(Vinyl vinyl, int id);
 
         void DeleteVinyl(int id);
     }

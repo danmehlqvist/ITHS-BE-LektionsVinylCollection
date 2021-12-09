@@ -25,9 +25,9 @@ namespace LektionsVinylCollection.Controllers
         [Route("")]
         public IActionResult GetVinyls()
         {
-            IOrderedEnumerable<VinylDTO> vinyls = _repo
-                .GetAll()
-                .Select(v => new VinylDTO
+            var vinyls = _repo
+                .GetAll();
+            var vinyls2 = vinyls.Select(v => new VinylDTO
                 {
                     Id = v.Id,
                     Artist = v.Artist,
@@ -65,9 +65,9 @@ namespace LektionsVinylCollection.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateVinyl([FromBody] Vinyl vinyl)
+        public IActionResult UpdateVinyl([FromBody] Vinyl vinyl, int id)
         {
-            Vinyl updatedVinyl = _repo.UpdateVinyl(vinyl);
+            Vinyl updatedVinyl = _repo.UpdateVinyl(vinyl, id);
             VinylDTO vinylDTO = MapVinylToVinylDTO(updatedVinyl);
             return Ok(vinylDTO);
         }
