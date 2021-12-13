@@ -3,6 +3,6 @@
     public class CreateVinylDTO
     {
         public string Title { get; set; }
-        public string Artist { get; set; }
+        public int  ArtistID { get; set; }
     }
 }

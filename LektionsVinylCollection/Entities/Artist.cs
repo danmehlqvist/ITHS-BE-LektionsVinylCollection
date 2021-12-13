@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace LektionsVinylCollection.Entities
 {
@@ -14,6 +16,10 @@ namespace LektionsVinylCollection.Entities
         public string FavoriteCar { get; set; }
 
         [Required]
-        public DataType Created { get; set; }
+        public DateTime Created { get; set; }
+
+        public List<Vinyl> Vinyls { get; set; }
+
+
     }
 }

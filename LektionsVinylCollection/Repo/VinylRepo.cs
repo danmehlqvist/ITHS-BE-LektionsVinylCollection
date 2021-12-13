@@ -1,5 +1,6 @@
 ﻿using LektionsVinylCollection.DTOs;
 using LektionsVinylCollection.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace LektionsVinylCollection.Repo
             Vinyl vinyl = new Vinyl();
 
             vinyl.Created = DateTime.Now;
-            vinyl.Artist = createdVinylDTO.Artist;
+            vinyl.ArtistID = createdVinylDTO.ArtistID;
             vinyl.Title = createdVinylDTO.Title;
 
             _context.Vinyls.Add(vinyl);
@@ -38,13 +39,19 @@ namespace LektionsVinylCollection.Repo
 
         public List<Vinyl> GetAll()
         {
-            return _context.Vinyls.ToList();
+            return _context
+                .Vinyls
+                .Include(v => v.Artist)
+                .ToList();
         }
 
         public Vinyl GetByID(int id)
         {
             //Vinyl vinyl = _vinyls.Find(x => x.Id == id);
-            Vinyl vinyl = _context.Vinyls.Find(id);
+            Vinyl vinyl = _context
+                .Vinyls
+                .Include(v => v.Artist)
+                .SingleOrDefault(x => x.Id == id);
             return vinyl;
         }
 

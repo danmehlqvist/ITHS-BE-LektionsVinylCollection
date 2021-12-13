@@ -1,6 +1,7 @@
 ﻿using LektionsVinylCollection.DTOs;
 using LektionsVinylCollection.Entities;
 using LektionsVinylCollection.Repo;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -26,15 +27,9 @@ namespace LektionsVinylCollection.Controllers
         public IActionResult GetVinyls()
         {
             var vinyls = _repo
-                .GetAll();
-            var vinyls2 = vinyls.Select(v => new VinylDTO
-                {
-                    Id = v.Id,
-                    Artist = v.Artist,
-                    Title = v.Title
-                })
-                .OrderBy(x => x.Title)
-                ;
+                .GetAll()
+                .ToList()
+                .MapToVinylDTOs();
             return Ok(vinyls);
         }
 
@@ -48,27 +43,32 @@ namespace LektionsVinylCollection.Controllers
                 return NotFound("Could not find vinyl with ID " + id);
             }
 
-            VinylDTO vinylDTO = MapVinylToVinylDTO(vinyl);
+            VinylDTO vinylDTO = vinyl.MapToVinylDTO();
             return Ok(vinylDTO);
         }
 
         [HttpPost("")]
-        public IActionResult CreateVinyl([FromBody]CreateVinylDTO createVinylDTO)
+        public IActionResult CreateVinyl([FromBody] CreateVinylDTO createVinylDTO)
         {
             Vinyl createdVinyl = _repo.CreateVinyl(createVinylDTO);
-            VinylDTO vinylDTO = MapVinylToVinylDTO(createdVinyl);
+            //VinylDTO vinylDTO = createdVinyl.MapToVinylDTO();
+
+            VinylDTO vinylSavedDTO = _repo
+                .GetByID(createdVinyl.Id)
+                .MapToVinylDTO();
 
             return CreatedAtAction(
                 nameof(GetVinylByID),
-                new { id = vinylDTO.Id },
-                vinylDTO);
+                new { id = vinylSavedDTO.Id },
+                vinylSavedDTO);
         }
 
         [HttpPut("{id}")]
         public IActionResult UpdateVinyl([FromBody] Vinyl vinyl, int id)
         {
             Vinyl updatedVinyl = _repo.UpdateVinyl(vinyl, id);
-            VinylDTO vinylDTO = MapVinylToVinylDTO(updatedVinyl);
+            //VinylDTO vinylDTO = updatedVinyl.MapToVinylDTO();
+            VinylDTO vinylDTO = _repo.GetByID(id).MapToVinylDTO();
             return Ok(vinylDTO);
         }
 
@@ -77,16 +77,6 @@ namespace LektionsVinylCollection.Controllers
         {
             _repo.DeleteVinyl(id);
             return NoContent();
-        }
-
-        private VinylDTO MapVinylToVinylDTO(Vinyl vinyl)
-        {
-            return new VinylDTO
-            {
-                Id = vinyl.Id,
-                Artist = vinyl.Artist,
-                Title = vinyl.Title,
-            };
         }
     }
 }
